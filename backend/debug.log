@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/home/chu/.openclaw/workspace/projects/agent_protocol/backend/main.py", line 17, in <module>
+    app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "../frontend")), name="static")
+                                                            ^^^^^^^^
+NameError: name 'BASE_DIR' is not defined

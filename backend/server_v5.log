@@ -1,0 +1,19 @@
+INFO:     Started server process [188970]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     2001:b011:e60c:bb0a:7947:d386:7fc2:f1d:0 - "GET / HTTP/1.1" 200 OK
+INFO:     2001:b011:e60c:bb0a:7947:d386:7fc2:f1d:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     2001:b011:e60c:bb0a:7947:d386:7fc2:f1d:0 - "GET /docs-ui HTTP/1.1" 200 OK
+INFO:     2001:b011:e60c:bb0a:7947:d386:7fc2:f1d:0 - "GET /app HTTP/1.1" 200 OK
+INFO:     34.239.73.114:0 - "GET / HTTP/1.1" 200 OK
+INFO:     198.145.51.188:0 - "GET / HTTP/1.1" 200 OK
+INFO:     198.145.51.188:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     103.196.9.209:0 - "GET / HTTP/1.1" 200 OK
+INFO:     103.4.251.115:0 - "GET / HTTP/1.1" 200 OK
+INFO:     2001:b011:e60c:bb0a:7947:d386:7fc2:f1d:0 - "GET / HTTP/1.1" 200 OK
+INFO:     2001:b011:e60c:bb0a:7947:d386:7fc2:f1d:0 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [188970]
