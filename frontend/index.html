@@ -209,16 +209,28 @@
                 btn.textContent = "Requesting Auth...";
                 btn.disabled = true;
 
-                // Real MetaMask Handshake Simulation
-                if (typeof window.ethereum !== 'undefined') {
+                // Real MetaMask Handshake
+                if (window.ethereum) {
                     try {
                         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                         const address = accounts[0];
+                        
+                        // Fetch real balance
+                        let balanceLabel = "0.000 ETH";
+                        try {
+                            const balanceHex = await window.ethereum.request({ 
+                                method: 'eth_getBalance', 
+                                params: [address, 'latest'] 
+                            });
+                            const balanceEth = (parseInt(balanceHex, 16) / 1e18).toFixed(3);
+                            balanceLabel = `${balanceEth} ETH`;
+                        } catch(be) { console.error("Balance fetch failed", be); }
+
                         walletState = { 
                             connected: true, 
                             address: address, 
                             chain: "Base Mainnet", 
-                            balance: "1.204 ETH", 
+                            balance: balanceLabel, 
                             provider: "MetaMask" 
                         };
                         ProtocolStore.setWallet(walletState);
@@ -226,20 +238,21 @@
                         btn.textContent = "Disconnect Wallet";
                         showToast("MetaMask Connected");
                     } catch (e) {
+                        console.error("MetaMask connection error", e);
                         showToast("Connection Refused");
                         btn.textContent = "Connect Wallet";
                     } finally {
                         btn.disabled = false;
                     }
                 } else {
-                    // Fallback for no wallet
+                    // Fallback simulation
                     setTimeout(() => {
                         walletState = { connected: true, address: "0xA71C...B42F", chain: "Base Mainnet", balance: "1.420 ETH", provider: "MockWallet" };
                         ProtocolStore.setWallet(walletState);
                         renderWallet();
                         btn.disabled = false;
                         btn.textContent = "Disconnect Wallet";
-                        showToast("Simulated Wallet Active");
+                        showToast("MetaMask not found. Simulation Active.");
                     }, 800);
                 }
             }
