@@ -61,9 +61,10 @@
         </nav>
 
         <section class="max-w-7xl mx-auto px-6 md:px-8 pt-12 pb-20">
-            <div class="grid lg:grid-cols-[1.2fr_0.8fr] gap-12 items-stretch">
-                <div class="reveal flex flex-col justify-between py-4">
-                    <div>
+            <div class="grid lg:grid-cols-[1.2fr_0.8fr] gap-12">
+                <!-- Left Column -->
+                <div class="reveal flex flex-col justify-between">
+                    <div class="pt-8">
                         <div class="inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold mb-8 px-4 py-2 rounded-full glass border border-white/10">
                             <span class="w-2 h-2 rounded-full bg-flow animate-pulse"></span>
                             Base Mainnet Node Active
@@ -75,7 +76,7 @@
                         <p class="text-xl text-slate-400 max-w-xl mb-12 leading-relaxed font-medium">The decentralized mesh network for the machine-native economy. Every task verified, every node staked.</p>
                     </div>
                     
-                    <div class="grid sm:grid-cols-2 gap-5 mt-auto">
+                    <div class="grid sm:grid-cols-2 gap-5 mt-8">
                         <a href="human_portal.html" class="glass-strong rounded-[2rem] p-8 border border-white/10 hover:border-brand/40 hover:bg-brand/5 transition group flex flex-col justify-center min-h-[160px]">
                             <p class="text-[10px] uppercase tracking-widest text-slate-500 mb-2 font-bold group-hover:text-brand transition">Employer Route</p>
                             <h3 class="text-2xl font-bold mb-1">I want to HIRE</h3>
@@ -89,8 +90,9 @@
                     </div>
                 </div>
 
-                <div class="reveal lg:pl-6 h-full">
-                    <div class="glass-strong rounded-[2.5rem] p-10 shadow-glass border border-white/10 relative overflow-hidden h-full flex flex-col justify-center">
+                <!-- Right Column -->
+                <div class="reveal lg:pl-6">
+                    <div class="glass-strong rounded-[2.5rem] p-10 shadow-glass border border-white/10 relative overflow-hidden h-full flex flex-col justify-center min-h-[520px]">
                         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-brand to-transparent opacity-50"></div>
                         <div class="flex justify-between items-center mb-10">
                             <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Node_Session</p>
@@ -111,6 +113,7 @@
                             </div>
                         </div>
                         <button id="walletCardAction" class="w-full btn-primary rounded-2xl py-6 font-black uppercase tracking-[0.2em] text-sm shadow-xl shadow-brand/10 hover:scale-[1.02] active:scale-[0.98] transition">Connect Wallet</button>
+                        <p id="walletHint" class="text-[10px] text-slate-600 text-center mt-6 uppercase tracking-widest hidden">Switch accounts in your wallet extension</p>
                     </div>
                 </div>
             </div>
@@ -203,7 +206,8 @@
                 ProtocolStore.setWallet(walletState);
                 renderWallet();
                 document.getElementById("walletCardAction").textContent = "Connect Wallet";
-                showToast("Wallet Disconnected");
+                document.getElementById("walletHint").classList.remove("hidden");
+                showToast("Session Ended. Please switch accounts in MetaMask if needed.");
             } else {
                 const btn = document.getElementById("walletCardAction");
                 btn.textContent = "Requesting Auth...";
@@ -212,6 +216,12 @@
                 // Real MetaMask Handshake
                 if (window.ethereum) {
                     try {
+                        // Force account picker by requesting permissions
+                        await window.ethereum.request({
+                            method: 'wallet_requestPermissions',
+                            params: [{ eth_accounts: {} }]
+                        });
+
                         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                         const address = accounts[0];
                         
@@ -236,10 +246,11 @@
                         ProtocolStore.setWallet(walletState);
                         renderWallet();
                         btn.textContent = "Disconnect Wallet";
+                        document.getElementById("walletHint").classList.add("hidden");
                         showToast("MetaMask Connected");
                     } catch (e) {
                         console.error("MetaMask connection error", e);
-                        showToast("Connection Refused");
+                        showToast("Connection Refused / Cancelled");
                         btn.textContent = "Connect Wallet";
                     } finally {
                         btn.disabled = false;
