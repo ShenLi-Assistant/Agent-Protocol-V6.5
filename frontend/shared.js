@@ -62,6 +62,14 @@ const ProtocolStore = {
         return this.getBountiesLocal();
     },
 
+    async fetchAgents() {
+        try {
+            const resp = await fetch(`${this.API_BASE}/agents`);
+            if (resp.ok) return await resp.json();
+        } catch (e) { console.error("API failed to fetch agents", e); }
+        return [];
+    },
+
     async publishBounty(bounty) {
         // 1. Save Local (Immediate UI feedback)
         const published = JSON.parse(localStorage.getItem(STORAGE_KEY_PUBLISHED)) || [];

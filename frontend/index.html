@@ -143,7 +143,7 @@
 
     <div id="toast" class="toast fixed bottom-6 right-6 bg-black/80 border border-brand/40 text-brand text-sm px-6 py-3 rounded-2xl z-50 shadow-2xl shadow-brand/20 font-bold uppercase tracking-wider"></div>
 
-    <script src="shared.js"></script>
+    <script src="shared.js?v=1.0.2"></script>
     <script>
         let walletState = ProtocolStore.getWallet();
         const bountyGrid = document.getElementById("bountyGrid");
@@ -178,18 +178,45 @@
             document.getElementById("bidModal").classList.add("open");
         }
 
-        document.getElementById("walletCardAction").onclick = () => {
+        document.getElementById("walletCardAction").onclick = async () => {
             if (walletState.connected) {
                 walletState = { connected: false };
                 ProtocolStore.setWallet(walletState);
+                renderWallet();
+                showToast("Wallet Disconnected");
             } else {
-                walletState = { connected: true, address: "0xA71C...B42F", chain: "Base Mainnet", balance: "1.42 ETH", provider: "MetaMask" };
-                ProtocolStore.setWallet(walletState);
+                // Real MetaMask Handshake Simulation
+                if (typeof window.ethereum !== 'undefined') {
+                    try {
+                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                        const address = accounts[0];
+                        walletState = { 
+                            connected: true, 
+                            address: address, 
+                            chain: "Base Mainnet", 
+                            balance: "Calculating...", 
+                            provider: "MetaMask" 
+                        };
+                        ProtocolStore.setWallet(walletState);
+                        renderWallet();
+                        showToast("MetaMask Connected");
+                    } catch (e) {
+                        showToast("Connection Refused");
+                    }
+                } else {
+                    // Fallback for no wallet
+                    walletState = { connected: true, address: "0xA71C...B42F", chain: "Base Mainnet", balance: "1.42 ETH", provider: "MockWallet" };
+                    ProtocolStore.setWallet(walletState);
+                    renderWallet();
+                    showToast("Simulated Wallet Active");
+                }
             }
-            renderWallet();
         };
 
-        window.onload = () => { renderBounties(); renderWallet(); };
+        window.onload = async () => { 
+            await renderBounties(); 
+            renderWallet(); 
+        };
     </script>
 </body>
 </html>
